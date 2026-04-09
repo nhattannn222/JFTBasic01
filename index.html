@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Form trắc nghiệm</title>
+    <title>Form trắc nghiệm JFT Basic 01 [Hương Sensei]</title>
     <style>
       :root {
-        --bg: #0b1020;
-        --card: #121a33;
-        --text: #e9eeff;
-        --muted: #a7b0d6;
-        --border: rgba(255, 255, 255, 0.12);
+        --bg: #ffffff;
+        --card: #ffffff;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: rgba(17, 24, 39, 0.14);
         --accent: #6ea8fe;
         --good: #2ecc71;
         --bad: #ff5b6e;
-        --warn: #ffcc66;
+        --warn: #b45309;
       }
       * { box-sizing: border-box; }
       body {
@@ -22,9 +22,7 @@
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
           "Segoe UI Emoji";
         color: var(--text);
-        background: radial-gradient(1200px 600px at 20% 0%, #1a2b6b 0%, transparent 55%),
-          radial-gradient(900px 500px at 90% 10%, #4b1a6b 0%, transparent 60%),
-          var(--bg);
+        background: var(--bg);
       }
       .wrap {
         max-width: 980px;
@@ -47,11 +45,11 @@
         line-height: 1.4;
       }
       .card {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+        background: var(--card);
         border: 1px solid var(--border);
         border-radius: 14px;
         padding: 14px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        box-shadow: 0 14px 40px rgba(17, 24, 39, 0.10);
       }
       .controls {
         display: grid;
@@ -73,7 +71,7 @@
         padding: 12px 12px;
         border-radius: 10px;
         border: 1px solid var(--border);
-        background: rgba(0, 0, 0, 0.25);
+        background: #ffffff;
         color: var(--text);
         outline: none;
       }
@@ -90,7 +88,7 @@
       button {
         appearance: none;
         border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.06);
+        background: #ffffff;
         color: var(--text);
         padding: 10px 12px;
         border-radius: 10px;
@@ -98,8 +96,8 @@
         font-weight: 650;
       }
       button.primary {
-        border-color: rgba(110, 168, 254, 0.4);
-        background: linear-gradient(180deg, rgba(110, 168, 254, 0.24), rgba(110, 168, 254, 0.12));
+        border-color: rgba(37, 99, 235, 0.35);
+        background: rgba(37, 99, 235, 0.08);
       }
       button:disabled {
         opacity: 0.55;
@@ -110,7 +108,7 @@
         padding: 12px;
         border-radius: 12px;
         border: 1px solid var(--border);
-        background: rgba(0, 0, 0, 0.25);
+        background: #f9fafb;
         display: none;
         gap: 10px;
       }
@@ -146,15 +144,15 @@
         border: 1px solid var(--border);
         border-radius: 14px;
         padding: 12px;
-        background: rgba(0, 0, 0, 0.18);
+        background: #ffffff;
       }
       #questionContainer .title-group { margin-bottom: 10px; color: var(--text); }
       #questionContainer .sub-title { color: var(--muted); font-weight: 500; }
       #questionContainer .question {
         padding: 10px 10px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(17, 24, 39, 0.10);
+        background: #ffffff;
         margin: 10px 0;
       }
       #questionContainer .question p {
@@ -167,11 +165,11 @@
         align-items: flex-start;
         padding: 8px 10px;
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(17, 24, 39, 0.10);
         margin: 8px 0;
         cursor: pointer;
         user-select: none;
-        background: rgba(0, 0, 0, 0.18);
+        background: #ffffff;
         color: var(--text);
       }
       #questionContainer input[type="radio"] { margin-top: 3px; }
@@ -180,7 +178,7 @@
         height: auto;
         display: block;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(17, 24, 39, 0.12);
         margin: 10px 0;
       }
       #questionContainer .audio-player { margin: 10px 0; }
@@ -190,6 +188,18 @@
       .q-wrong { border-color: rgba(255, 91, 110, 0.45) !important; }
       .opt-correct { border-color: rgba(46, 204, 113, 0.55) !important; background: rgba(46, 204, 113, 0.12) !important; }
       .opt-wrong { border-color: rgba(255, 91, 110, 0.55) !important; background: rgba(255, 91, 110, 0.12) !important; }
+      .q-missing { border-color: rgba(180, 83, 9, 0.55) !important; background: rgba(180, 83, 9, 0.06) !important; }
+
+      .bottom-actions {
+        position: sticky;
+        bottom: 0;
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(6px);
+      }
 
       @media (min-width: 760px) {
         .controls { grid-template-columns: 1.3fr 1fr; align-items: end; }
@@ -200,9 +210,9 @@
   <body>
     <div class="wrap">
       <header>
-        <div class="title">Form trắc nghiệm</div>
+        <div class="title">Form trắc nghiệm JFT Basic 01 [Hương Sensei]</div>
         <div class="subtitle">
-          Nhập tên, làm bài và bấm <b>Nộp bài</b> để chấm điểm. (Dữ liệu câu hỏi được lấy từ file <code>data.txt</code>.)
+          Nhập tên, làm bài và bấm <b>Nộp bài</b> để chấm điểm.
         </div>
       </header>
 
@@ -212,10 +222,7 @@
             <label class="small" for="fullName">Họ và tên</label>
             <input id="fullName" type="text" placeholder="Nhập tên của bạn..." autocomplete="name" />
             <div id="nameHint" class="hint">Bạn cần nhập tên trước khi nộp bài.</div>
-          </div>
-          <div class="btns">
-            <button id="submitBtn" class="primary" type="button">Nộp bài</button>
-            <button id="resetBtn" type="button">Làm lại</button>
+            <div id="allAnsweredHint" class="hint">Bạn phải chọn <b>tất cả</b> các câu trước khi nộp bài.</div>
           </div>
         </div>
 
@@ -223,6 +230,12 @@
 
         <div class="quiz">
           <div id="mount"></div>
+          <div class="bottom-actions">
+            <div class="btns">
+              <button id="submitBtn" class="primary" type="button">Nộp bài</button>
+              <button id="resetBtn" type="button">Làm lại</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -642,7 +655,7 @@ table, tr, td {
 </div>
 <br>
 <div style="text-align:center;"><strong>ショーが終わったから</strong></div>
-   <div style="padding:5px;&quot;"> ● ぞうに、にんじんやバナナをあげることができます。
+   <div style="padding:5px;"> ● ぞうに、にんじんやバナナをあげることができます。
 　 あやつ（※1）バケツ（一つ分¥500）は、ショー広場（※2）で売っています。<br>
     ● ぞうの背中に乗って散歩することができます。（3人まで乗ることができます。）<br>
     ● チケットがいります。ショーの始まる30分前までに動物園の入り口で買ってください。<br>
@@ -774,7 +787,7 @@ table, th, td {
  width:auto;
 }
 </style>
-                </span></p><h2 style="colo:black;">A</h2>
+                </span></p><h2 style="color:black;">A</h2>
 
 <table>
 <tbody><tr>
@@ -802,7 +815,7 @@ table, th, td {
 
 
 
-<h2 style="colo:black;">B</h2>
+<h2 style="color:black;">B</h2>
 <table>
 <tbody><tr>
 <td>　
@@ -980,6 +993,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
     <script>
       const fullNameEl = document.getElementById("fullName");
       const nameHintEl = document.getElementById("nameHint");
+      const allAnsweredHintEl = document.getElementById("allAnsweredHint");
       const submitBtn = document.getElementById("submitBtn");
       const resetBtn = document.getElementById("resetBtn");
       const resultEl = document.getElementById("result");
@@ -989,7 +1003,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
       function normalizeAndExtractAnswers(root) {
         const questions = Array.from(root.querySelectorAll(".question"));
         for (const q of questions) {
-          q.classList.remove("q-correct", "q-wrong");
+          q.classList.remove("q-correct", "q-wrong", "q-missing");
           q.removeAttribute("data-correct");
           const labels = Array.from(q.querySelectorAll("label"));
           let correctValue = null;
@@ -1043,7 +1057,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
 
       function unlockInputsAndClear() {
         for (const q of getAllQuestionBlocks()) {
-          q.classList.remove("q-correct", "q-wrong");
+          q.classList.remove("q-correct", "q-wrong", "q-missing");
           for (const lb of q.querySelectorAll("label")) lb.classList.remove("opt-correct", "opt-wrong");
           for (const input of q.querySelectorAll('input[type="radio"]')) {
             input.disabled = false;
@@ -1056,25 +1070,40 @@ B の買い物は、何ポイント（なんてん）もらえますか。
         const name = (fullNameEl.value || "").trim();
         if (!name) {
           nameHintEl.classList.add("show");
+          allAnsweredHintEl.classList.remove("show");
           fullNameEl.focus();
           return;
         }
         nameHintEl.classList.remove("show");
+        allAnsweredHintEl.classList.remove("show");
 
         const questions = getAllQuestionBlocks();
         let correct = 0;
         let answered = 0;
-        const missed = [];
+        const missing = [];
+
+        for (const q of questions) {
+          q.classList.remove("q-missing");
+          const choice = getUserChoice(q);
+          if (choice) answered++;
+          else missing.push(q);
+        }
+
+        // Require: all questions must be answered
+        if (missing.length > 0) {
+          allAnsweredHintEl.classList.add("show");
+          // Mark missing + scroll to first missing question
+          for (const q of missing) q.classList.add("q-missing");
+          missing[0].scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
 
         for (let i = 0; i < questions.length; i++) {
           const q = questions[i];
           const correctValue = q.dataset.correct || null;
           const choice = getUserChoice(q);
-
-          if (choice) answered++;
           const isCorrect = !!choice && !!correctValue && choice === correctValue;
           if (isCorrect) correct++;
-          else missed.push({ idx: i + 1, correctValue, choice });
 
           q.classList.toggle("q-correct", isCorrect);
           q.classList.toggle("q-wrong", !isCorrect);
@@ -1092,12 +1121,11 @@ B の買い物は、何ポイント（なんてん）もらえますか。
 
         const total = questions.length;
         const pct = total ? Math.round((correct / total) * 100) : 0;
-        const missedCount = missed.length;
 
         resultEl.classList.add("show");
         resultEl.innerHTML = `
-          <div class="score">${name}: ${correct}/${total} (${pct}%)</div>
-          <div class="meta">Đã chọn: ${answered}/${total} câu. Sai/Chưa làm: ${missedCount} câu.</div>
+          <div class="score">${name}: Điểm ${correct}/${total} (${pct}%)</div>
+          <div class="meta">Mỗi câu 1 điểm. Đã chọn: ${answered}/${total} câu.</div>
         `;
         resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -1106,6 +1134,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
         resultEl.classList.remove("show");
         resultEl.innerHTML = "";
         nameHintEl.classList.remove("show");
+        allAnsweredHintEl.classList.remove("show");
         unlockInputsAndClear();
         fullNameEl.focus();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1114,6 +1143,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
       submitBtn.addEventListener("click", grade);
       resetBtn.addEventListener("click", resetAll);
       fullNameEl.addEventListener("input", () => nameHintEl.classList.remove("show"));
+      fullNameEl.addEventListener("input", () => allAnsweredHintEl.classList.remove("show"));
 
       renderQuiz();
       fullNameEl.focus();
