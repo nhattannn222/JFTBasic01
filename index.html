@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Form trắc nghiệm JFT Basic 01 [Hương Sensei]</title>
+    <title>JFT Basic [Hương Sensei]</title>
     <style>
       :root {
         --bg: #ffffff;
@@ -17,6 +17,7 @@
         --warn: #b45309;
       }
       * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
       body {
         margin: 0;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
@@ -173,6 +174,12 @@
         color: var(--text);
       }
       #questionContainer input[type="radio"] { margin-top: 3px; }
+      /* Some quizzes include images without the .question-img class */
+      #questionContainer img {
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain;
+      }
       #questionContainer img.question-img {
         max-width: 100%;
         height: auto;
@@ -182,6 +189,27 @@
         margin: 10px 0;
       }
       #questionContainer .audio-player { margin: 10px 0; }
+      #questionContainer audio { width: 100%; max-width: 520px; }
+
+      /* Prevent horizontal overflow from imported rich HTML (tables, long strings) */
+      #questionContainer { overflow-x: hidden; }
+      #questionContainer .group,
+      #questionContainer .question { overflow-x: hidden; }
+      #questionContainer table {
+        max-width: 100%;
+        width: max-content;
+        border-collapse: collapse;
+      }
+      #questionContainer table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      #questionContainer td,
+      #questionContainer th {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
 
       /* After submit feedback */
       .q-correct { border-color: rgba(46, 204, 113, 0.45) !important; }
@@ -201,6 +229,105 @@
         backdrop-filter: blur(6px);
       }
 
+      .quiz-picker {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .chip {
+        border: 1px solid var(--border);
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 12px 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        text-align: left;
+      }
+      .chip[aria-current="true"] {
+        border-color: rgba(37, 99, 235, 0.35);
+        background: rgba(37, 99, 235, 0.08);
+      }
+      .chip .chip-sub { display: block; color: var(--muted); font-weight: 600; font-size: 12px; margin-top: 2px; }
+
+      .screen { display: none; }
+      .screen.show { display: block; }
+
+      @media (min-width: 900px) {
+        .quiz-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 520px) {
+        .quiz-picker { grid-template-columns: 1fr; }
+        .wrap { margin: 16px auto 44px; padding: 0 12px; }
+        .card { padding: 12px; border-radius: 12px; }
+        .title { font-size: 18px; }
+        #questionContainer > .title > p,
+        #questionContainer .title-group > p { font-size: 16px; }
+        #questionContainer .question { padding: 10px; }
+        #questionContainer label { padding: 10px; }
+
+        /* Mobile: prefer scaling content to fit (avoid horizontal scroll) */
+        #questionContainer table {
+          display: table;
+          width: 100% !important;
+          max-width: 100% !important;
+          table-layout: fixed;
+          overflow-x: visible;
+        }
+        #questionContainer td,
+        #questionContainer th {
+          max-width: 0;
+        }
+        #questionContainer table img {
+          width: 100% !important;
+          max-width: 100% !important;
+          height: auto !important;
+        }
+
+        .btns { gap: 8px; }
+        .btns > button { flex: 1 1 auto; }
+        button { padding: 12px 12px; }
+        .bottom-actions {
+          padding: 10px;
+          border-radius: 12px;
+          bottom: env(safe-area-inset-bottom);
+        }
+        textarea { min-height: 200px; }
+      }
+
+      dialog {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        max-width: 760px;
+        width: calc(100% - 28px);
+      }
+      dialog::backdrop { background: rgba(17, 24, 39, 0.35); }
+      .dlg-title { font-weight: 900; font-size: 16px; margin: 0 0 10px; }
+      .dlg-grid { display: grid; gap: 10px; }
+      textarea {
+        width: 100%;
+        min-height: 240px;
+        resize: vertical;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        color: var(--text);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        color: var(--text);
+      }
+
       @media (min-width: 760px) {
         .controls { grid-template-columns: 1.3fr 1fr; align-items: end; }
         .row { grid-template-columns: 1fr; }
@@ -210,38 +337,61 @@
   <body>
     <div class="wrap">
       <header>
-        <div class="title">Form trắc nghiệm JFT Basic 01 [Hương Sensei]</div>
+        <div class="title">Form trắc nghiệm JFT Basic [Hương Sensei]</div>
         <div class="subtitle">
-          Nhập tên, làm bài và bấm <b>Nộp bài</b> để chấm điểm.
+          Chọn 1 bài, nhập tên, làm bài và bấm <b>Nộp bài</b> để chấm điểm. Mỗi câu 1 điểm và bắt buộc chọn đủ tất cả câu.
         </div>
       </header>
 
       <div class="card">
-        <div class="controls">
-          <div class="row">
-            <label class="small" for="fullName">Họ và tên</label>
-            <input id="fullName" type="text" placeholder="Nhập tên của bạn..." autocomplete="name" />
-            <div id="nameHint" class="hint">Bạn cần nhập tên trước khi nộp bài.</div>
-            <div id="allAnsweredHint" class="hint">Bạn phải chọn <b>tất cả</b> các câu trước khi nộp bài.</div>
+        <div id="screenHome" class="screen show">
+          <div class="subtitle" style="margin:0 0 10px;">
+            Chọn bài để bắt đầu. Danh sách được chia 2 cột.
           </div>
+          <div id="quizPicker" class="quiz-picker" aria-label="Chọn bài"></div>
         </div>
 
-        <div id="result" class="result" aria-live="polite"></div>
+        <div id="screenQuiz" class="screen">
+          <div class="controls">
+            <div class="row">
+              <label class="small" for="fullName">Họ và tên</label>
+              <input id="fullName" type="text" placeholder="Nhập tên của bạn..." autocomplete="name" />
+              <div id="nameHint" class="hint">Bạn cần nhập tên trước khi nộp bài.</div>
+              <div id="allAnsweredHint" class="hint">Bạn phải chọn <b>tất cả</b> các câu trước khi nộp bài.</div>
+              <div id="dataHint" class="hint">
+                Chưa có dữ liệu bài này. Hãy chạy <code>node ./scripts/build-quizzes.mjs</code> để tạo file
+                <code>quizzes.generated.js</code>, rồi mở lại trang.
+              </div>
+            </div>
+          </div>
 
-        <div class="quiz">
-          <div id="mount"></div>
-          <div class="bottom-actions">
-            <div class="btns">
-              <button id="submitBtn" class="primary" type="button">Nộp bài</button>
-              <button id="resetBtn" type="button">Làm lại</button>
+          <div id="result" class="result" aria-live="polite"></div>
+
+          <div class="quiz">
+            <div id="mount"></div>
+            <div class="bottom-actions">
+              <div class="btns">
+                <button id="submitBtn" class="primary" type="button">Nộp bài</button>
+                <button id="backBtn" type="button">Quay lại danh sách</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Embed nguyên nội dung data.txt để chạy được cả khi mở file trực tiếp (không cần fetch). -->
-    <template id="dataTemplate">
+    <dialog id="scoreDialog">
+      <form method="dialog" class="dlg-grid">
+        <p class="dlg-title">Kết quả</p>
+        <div id="scoreDialogBody" class="subtitle" style="margin:0;"></div>
+        <div class="btns">
+          <button class="primary" value="ok" type="submit">Đóng</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Basic 01 embedded để chạy ngay -->
+    <template id="basic01Template">
       <div id="questionContainer">
                     <div class="title">
                         <p>文字と語彙</p>
@@ -990,15 +1140,50 @@ B の買い物は、何ポイント（なんてん）もらえますか。
                 <label><input type="radio" name="question48" value="D" disabled="">本屋で　買う</label></div></div></div>
     </template>
 
+    <script src="./quizzes.generated.js"></script>
     <script>
+
       const fullNameEl = document.getElementById("fullName");
       const nameHintEl = document.getElementById("nameHint");
       const allAnsweredHintEl = document.getElementById("allAnsweredHint");
+      const dataHintEl = document.getElementById("dataHint");
       const submitBtn = document.getElementById("submitBtn");
-      const resetBtn = document.getElementById("resetBtn");
+      const backBtn = document.getElementById("backBtn");
       const resultEl = document.getElementById("result");
       const mountEl = document.getElementById("mount");
-      const dataTpl = document.getElementById("dataTemplate");
+      const pickerEl = document.getElementById("quizPicker");
+      const basic01Tpl = document.getElementById("basic01Template");
+      const screenHome = document.getElementById("screenHome");
+      const screenQuiz = document.getElementById("screenQuiz");
+      const scoreDialog = document.getElementById("scoreDialog");
+      const scoreDialogBody = document.getElementById("scoreDialogBody");
+
+      const generated = Array.isArray(window.GENERATED_QUIZZES) ? window.GENERATED_QUIZZES : [];
+
+      const ALL_QUIZZES = [
+        {
+          id: "jft-basic-01",
+          title: "JFT Basic 01",
+          sourceUrl: null,
+          getContainerNode() {
+            const frag = basic01Tpl.content.cloneNode(true);
+            return frag.querySelector("#questionContainer");
+          },
+        },
+        ...generated.map((q) => ({
+          id: q.id,
+          title: q.title,
+          sourceUrl: q.sourceUrl,
+          getContainerNode() {
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = q.questionContainerHtml;
+            return wrapper.querySelector("#questionContainer");
+          },
+        })),
+      ];
+
+      let currentQuizId = null;
+      const HASH_PREFIX = "#quiz=";
 
       function normalizeAndExtractAnswers(root) {
         const questions = Array.from(root.querySelectorAll(".question"));
@@ -1012,7 +1197,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
             const input = lb.querySelector('input[type="radio"]');
             if (!input) continue;
 
-            // Identify correct answer: label has inline style containing 'green'
+            // Identify correct answer from inline style (color: green)
             const style = (lb.getAttribute("style") || "").toLowerCase();
             if (style.includes("green")) correctValue = input.value;
 
@@ -1020,7 +1205,7 @@ B の買い物は、何ポイント（なんてん）もらえますか。
             input.disabled = false;
             input.checked = false;
 
-            // Remove old "answer key" hints from data.txt
+            // Remove old "answer key" hints from source HTML
             lb.classList.remove("selected-answer");
             lb.removeAttribute("style");
             lb.classList.remove("opt-correct", "opt-wrong");
@@ -1033,9 +1218,79 @@ B の買い物は、何ポイント（なんてん）もらえますか。
         return root;
       }
 
+      function getQuizContainerNode(quizId) {
+        const quiz = ALL_QUIZZES.find((q) => q.id === quizId);
+        return quiz ? quiz.getContainerNode() : null;
+      }
+
+      function showHome() {
+        screenHome.classList.add("show");
+        screenQuiz.classList.remove("show");
+        currentQuizId = null;
+        dataHintEl.classList.remove("show");
+        renderPicker();
+        mountEl.replaceChildren();
+        resultEl.classList.remove("show");
+        resultEl.innerHTML = "";
+        window.location.hash = "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function showQuiz(quizId) {
+        currentQuizId = quizId;
+        screenHome.classList.remove("show");
+        screenQuiz.classList.add("show");
+        renderPicker();
+        renderQuiz();
+        resetAll({ keepName: true, keepScroll: false });
+        window.location.hash = `${HASH_PREFIX}${encodeURIComponent(quizId)}`;
+      }
+
+      function renderPicker() {
+        pickerEl.replaceChildren(
+          ...ALL_QUIZZES.map((slot) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "chip";
+            // Show compact label like 01, 02... if matches
+            const m = /jft-basic-(\d{2})$/.exec(slot.id);
+            const code = m ? m[1] : slot.title;
+            btn.innerHTML = `${code}<span class="chip-sub">${slot.title}</span>`;
+            btn.dataset.quizId = slot.id;
+
+            if (slot.id === currentQuizId) btn.setAttribute("aria-current", "true");
+            else btn.setAttribute("aria-current", "false");
+
+            btn.addEventListener("click", () => {
+              if (currentQuizId === slot.id && screenQuiz.classList.contains("show")) return;
+              showQuiz(slot.id);
+            });
+
+            return btn;
+          })
+        );
+      }
+
       function renderQuiz() {
-        const frag = dataTpl.content.cloneNode(true);
-        const container = frag.querySelector("#questionContainer");
+        // No quiz chosen: show list-only state
+        if (!currentQuizId) {
+          mountEl.replaceChildren();
+          submitBtn.disabled = true;
+          backBtn.disabled = true;
+          return;
+        }
+
+        const container = getQuizContainerNode(currentQuizId);
+        if (!container) {
+          mountEl.replaceChildren();
+          dataHintEl.classList.add("show");
+          submitBtn.disabled = true;
+          backBtn.disabled = false;
+          return;
+        }
+        dataHintEl.classList.remove("show");
+        submitBtn.disabled = false;
+        backBtn.disabled = false;
         normalizeAndExtractAnswers(container);
         mountEl.replaceChildren(container);
       }
@@ -1128,24 +1383,54 @@ B の買い物は、何ポイント（なんてん）もらえますか。
           <div class="meta">Mỗi câu 1 điểm. Đã chọn: ${answered}/${total} câu.</div>
         `;
         resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Pretty popup score
+        if (scoreDialog && typeof scoreDialog.showModal === "function") {
+          scoreDialogBody.innerHTML = `
+            <div style="font-weight:900; font-size:18px; color: var(--text); margin-bottom:6px;">
+              ${name}: ${correct}/${total} (${pct}%)
+            </div>
+            <div>Đã chọn: ${answered}/${total} câu.</div>
+            <div style="margin-top:6px; color: var(--muted);">Bạn có thể đóng popup để xem lại đáp án đúng/sai trên bài.</div>
+          `;
+          scoreDialog.showModal();
+        }
       }
 
       function resetAll() {
+        resetAll({ keepName: false, keepScroll: false });
+      }
+
+      function resetAll({ keepName, keepScroll }) {
         resultEl.classList.remove("show");
         resultEl.innerHTML = "";
         nameHintEl.classList.remove("show");
         allAnsweredHintEl.classList.remove("show");
+        dataHintEl.classList.remove("show");
         unlockInputsAndClear();
+        if (!keepName) fullNameEl.value = "";
         fullNameEl.focus();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (!keepScroll) window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       submitBtn.addEventListener("click", grade);
-      resetBtn.addEventListener("click", resetAll);
+      backBtn.addEventListener("click", () => {
+        showHome();
+      });
       fullNameEl.addEventListener("input", () => nameHintEl.classList.remove("show"));
       fullNameEl.addEventListener("input", () => allAnsweredHintEl.classList.remove("show"));
+      fullNameEl.addEventListener("input", () => dataHintEl.classList.remove("show"));
 
-      renderQuiz();
+      renderPicker();
+      // Router: open quiz if hash present
+      const hash = window.location.hash || "";
+      if (hash.startsWith(HASH_PREFIX)) {
+        const id = decodeURIComponent(hash.slice(HASH_PREFIX.length));
+        if (ALL_QUIZZES.some((q) => q.id === id)) showQuiz(id);
+        else showHome();
+      } else {
+        showHome();
+      }
       fullNameEl.focus();
     </script>
   </body>
